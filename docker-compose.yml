@@ -1,0 +1,74 @@
+# go-microservices-store/docker-compose.yml
+# docker compose up -d
+# postgres://admin:secret@localhost:5432/auth_db?sslmode=disable
+
+services:
+  # auth-service:
+  #   build: ./auth-service
+  #   container_name: auth-service
+  #   ports:
+  #     - "8081:8080"
+  #   depends_on:
+  #     - auth-db
+  #   networks:
+  #     - microservices-network
+
+  auth-db:
+    image: postgres:16
+    container_name: auth-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: secret
+      POSTGRES_DB: auth_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - auth_postgres_data:/var/lib/postgresql/data
+    networks:
+      - microservices-network
+
+  # product-service:
+  #   build: ./product-service
+  #   container_name: product-service
+  #   ports:
+  #     - "8082:8080"
+  #   depends_on:
+  #     - product-db
+  #   networks:
+  #     - microservices-network
+
+  # product-db:
+  #   image: postgres:16
+  #   container_name: product-db
+  #   restart: unless-stopped
+  #   environment:
+  #     POSTGRES_USER: admin
+  #     POSTGRES_PASSWORD: secret
+  #     POSTGRES_DB: product_db
+  #   ports:
+  #     - "5433:5432"
+  #   volumes:
+  #     - product_postgres_data:/var/lib/postgresql/data
+  #   networks:
+  #     - microservices-network
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@gmail.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "5052:80"
+    networks:
+      - microservices-network
+
+volumes:
+  auth_postgres_data:
+  # product_postgres_data:
+
+networks:
+  microservices-network:
+    driver: bridge
